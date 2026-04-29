@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -348,7 +348,7 @@ def build_digest_message(
     result: dict[str, Any],
     jobs: list[dict[str, Any]],
 ) -> str:
-    run_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    run_time = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d %H:%M IST")
     header = [
         "LinkedIn job digest",
         f"Run: {run_time}",
@@ -366,7 +366,7 @@ def build_digest_message(
 
 
 def build_empty_message(result: dict[str, Any]) -> str:
-    run_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    run_time = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d %H:%M IST")
     return (
         "LinkedIn job digest\n"
         f"Run: {run_time}\n"
