@@ -1,0 +1,72 @@
+name: LinkedIn Job Digest
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: linkedin-job-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            pyproject.toml
+            uv.lock
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Sync dependencies
+        run: uv sync --locked
+
+      - name: Run LinkedIn digest
+        run: uv run --frozen python run_linkedin_digest.py
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL: ${{ vars.GROQ_MODEL }}
+          GROQ_MAX_TOKENS: ${{ vars.GROQ_MAX_TOKENS }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          LINKEDIN_KEYWORDS: ${{ vars.LINKEDIN_KEYWORDS }}
+          LINKEDIN_LOCATION: ${{ vars.LINKEDIN_LOCATION }}
+          LINKEDIN_EXPERIENCE: ${{ vars.LINKEDIN_EXPERIENCE }}
+          LINKEDIN_REMOTE: ${{ vars.LINKEDIN_REMOTE }}
+          LINKEDIN_JOB_TYPE: ${{ vars.LINKEDIN_JOB_TYPE }}
+          LINKEDIN_DATE_POSTED: ${{ vars.LINKEDIN_DATE_POSTED }}
+          LINKEDIN_MAX_PAGES: ${{ vars.LINKEDIN_MAX_PAGES }}
+          LINKEDIN_PROFILE: ${{ vars.LINKEDIN_PROFILE }}
+          LINKEDIN_SEARCH_PROFILES_JSON: ${{ secrets.LINKEDIN_SEARCH_PROFILES_JSON }}
+          FORCE_PROFILE_SYNC: ${{ vars.FORCE_PROFILE_SYNC }}
+          NOTIFY_ON_EMPTY: ${{ vars.NOTIFY_ON_EMPTY }}
+          MAX_JOB_LINKS: ${{ vars.MAX_JOB_LINKS }}
+
+      - name: Persist scraper state
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f search_profiles.json ]; then git add -- search_profiles.json; fi
+          if [ -f seen_jobs.json ]; then git add -- seen_jobs.json; fi
+          if git diff --cached --quiet; then
+            echo "No scraper state changes to persist."
+          else
+            git commit -m "Update LinkedIn job digest state"
+            git push
+          fi

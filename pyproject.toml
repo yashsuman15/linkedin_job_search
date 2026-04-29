@@ -1,0 +1,14 @@
+[project]
+name = "linkedin-job-digest"
+version = "0.1.0"
+description = "Scheduled LinkedIn job scraper digest using Groq and Telegram"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4>=4.12.0",
+    "groq>=0.9.0",
+    "requests>=2.31.0",
+]
+
+[tool.uv]
+package = false
