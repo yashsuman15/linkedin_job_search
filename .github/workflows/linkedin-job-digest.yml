@@ -55,7 +55,6 @@ jobs:
           LINKEDIN_SEARCH_PROFILES_JSON: ${{ secrets.LINKEDIN_SEARCH_PROFILES_JSON }}
           FORCE_PROFILE_SYNC: ${{ vars.FORCE_PROFILE_SYNC }}
           NOTIFY_ON_EMPTY: ${{ vars.NOTIFY_ON_EMPTY }}
-          MAX_JOB_LINKS: ${{ vars.MAX_JOB_LINKS }}
 
       - name: Persist scraper state
         if: always()
