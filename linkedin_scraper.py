@@ -40,6 +40,7 @@ def load_config() -> dict:
             "date_posted": "r86400",
             "max_pages": 2,
             "job_type": "",
+            "max_experience_years": 2,
         },
         "scraper": {
             "delay_min": 1.5,
@@ -152,6 +153,7 @@ class JobListing:
     requirements: str = ""
     tech_stack: str = ""
     role_summary: str = ""
+    min_experience_years: Optional[int] = None
     scraped_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
 
@@ -456,27 +458,29 @@ class LinkedInScraper:
 
             job.tech_stack = ", ".join(found_tech[:10]) if found_tech else ""
 
-        # Extract experience requirements
+        # Extract experience requirements (always extract for filtering)
+        import re
+
+        exp_patterns = [
+            r"(\d+)\+?\s*(?:years?|yrs?)(?:\s+of)?\s+(?:experience|exp)",
+            r"(?:experience|exp)(?:\s+of)?\s*:?\s*(\d+)\+?\s*(?:years?|yrs?)",
+            r"(\d+)\s*-\s*(\d+)\s*(?:years?|yrs?)",
+        ]
+
+        exp_text = ""
+        for pattern in exp_patterns:
+            matches = re.findall(pattern, desc_lower)
+            if matches:
+                if isinstance(matches[0], tuple):
+                    exp_text = f"{matches[0][0]}-{matches[0][1]} years"
+                    job.min_experience_years = int(matches[0][0])
+                else:
+                    exp_text = f"{matches[0]}+ years"
+                    job.min_experience_years = int(matches[0])
+                break
+
         if notifications_config.get("include_requirements", True):
-            import re
-
-            exp_patterns = [
-                r"(\d+)\+?\s*(?:years?|yrs?)(?:\s+of)?\s+(?:experience|exp)",
-                r"(?:experience|exp)(?:\s+of)?\s*:?\s*(\d+)\+?\s*(?:years?|yrs?)",
-                r"(\d+)\s*-\s*(\d+)\s*(?:years?|yrs?)",
-            ]
-
-            exp_matches = []
-            for pattern in exp_patterns:
-                matches = re.findall(pattern, desc_lower)
-                if matches:
-                    if isinstance(matches[0], tuple):
-                        exp_matches.append(f"{matches[0][0]}-{matches[0][1]} years")
-                    else:
-                        exp_matches.append(f"{matches[0]}+ years")
-                    break
-
-            job.requirements = exp_matches[0] if exp_matches else ""
+            job.requirements = exp_text
 
         # Extract role summary (first meaningful paragraph)
         if notifications_config.get("include_role_summary", True):

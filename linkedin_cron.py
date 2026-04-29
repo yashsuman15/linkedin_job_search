@@ -54,6 +54,7 @@ def get_defaults() -> dict:
             "date_posted": "r86400",
             "max_pages": 2,
             "job_type": "",
+            "max_experience_years": 2,
         },
     )
 
@@ -426,6 +427,49 @@ def run_profiles(profile_id: Optional[str] = None, mark_seen: bool = True) -> di
             )
 
             jobs_dict = [asdict(j) for j in jobs]
+
+            # Filter by max experience years
+            max_exp = profile.get("max_experience_years")
+            if max_exp is None:
+                max_exp = data.get("defaults", {}).get("max_experience_years")
+            if max_exp is not None:
+                before_count = len(jobs_dict)
+                jobs_dict = [
+                    j for j in jobs_dict
+                    if j.get("min_experience_years") is None
+                    or j["min_experience_years"] <= max_exp
+                ]
+                filtered_count = before_count - len(jobs_dict)
+                if filtered_count:
+                    print(
+                        f"[Cron] Filtered {filtered_count} job(s) exceeding {max_exp}yr experience cap",
+                        file=sys.stderr,
+                    )
+
+            # Filter by title relevance to search keywords
+            title_stop_words = {
+                "engineer", "developer", "senior", "junior", "lead",
+                "manager", "intern", "associate", "staff", "principal",
+                "director", "architect", "analyst", "consultant",
+                "specialist", "head", "vp", "officer",
+            }
+            search_words = [
+                w for w in profile["keywords"].lower().split()
+                if w not in title_stop_words
+            ]
+            if search_words:
+                pattern = "|".join(re.escape(w) for w in search_words)
+                before_count = len(jobs_dict)
+                jobs_dict = [
+                    j for j in jobs_dict
+                    if re.search(rf"\b({pattern})\b", j.get("title", "").lower())
+                ]
+                filtered_count = before_count - len(jobs_dict)
+                if filtered_count:
+                    print(
+                        f"[Cron] Filtered {filtered_count} job(s) with irrelevant titles",
+                        file=sys.stderr,
+                    )
 
             # Add profile info to each job
             for j in jobs_dict:

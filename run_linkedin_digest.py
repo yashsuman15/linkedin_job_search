@@ -87,6 +87,13 @@ def normalize_profile(profile: dict[str, Any]) -> dict[str, Any]:
         "last_run": profile.get("last_run"),
         "total_jobs_found": int(profile.get("total_jobs_found", 0)),
     }
+
+    # Optional experience cap (None means no cap)
+    max_exp = profile.get("max_experience_years")
+    if max_exp is None:
+        max_exp = defaults.get("max_experience_years")
+    normalized["max_experience_years"] = int(max_exp) if max_exp is not None else None
+
     return normalized
 
 
