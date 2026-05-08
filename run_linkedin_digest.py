@@ -404,21 +404,39 @@ def chunk_message(text: str, limit: int = SAFE_MESSAGE_LIMIT) -> list[str]:
 
 
 def send_telegram_message(text: str) -> None:
-    token = require_env("TELEGRAM_BOT_TOKEN")
-    chat_id = require_env("TELEGRAM_CHAT_ID")
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    tokens_str = require_env("TELEGRAM_BOT_TOKEN")
+    chat_ids_str = require_env("TELEGRAM_CHAT_ID")
+    
+    tokens = [t.strip() for t in tokens_str.split(",") if t.strip()]
+    chat_ids = [c.strip() for c in chat_ids_str.split(",") if c.strip()]
+    
+    if not tokens or not chat_ids:
+        raise RuntimeError("No valid Telegram tokens or chat IDs found")
+        
+    if len(tokens) != len(chat_ids):
+        # Fallback to using the same token for multiple chat IDs if only one token is provided
+        if len(tokens) == 1 and len(chat_ids) > 1:
+            tokens = tokens * len(chat_ids)
+        # Fallback to using the same chat ID for multiple tokens if only one chat ID is provided
+        elif len(chat_ids) == 1 and len(tokens) > 1:
+            chat_ids = chat_ids * len(tokens)
+        else:
+            raise RuntimeError("The number of TELEGRAM_BOT_TOKENs must match the number of TELEGRAM_CHAT_IDs (or provide exactly one of either)")
 
-    for chunk in chunk_message(text, limit=min(SAFE_MESSAGE_LIMIT, TELEGRAM_LIMIT)):
-        payload = {
-            "chat_id": chat_id,
-            "text": chunk,
-            "link_preview_options": {"is_disabled": True},
-        }
-        response = requests.post(url, json=payload, timeout=30)
-        response.raise_for_status()
-        data = response.json()
-        if not data.get("ok"):
-            raise RuntimeError(f"Telegram sendMessage failed: {data}")
+    for token, chat_id in zip(tokens, chat_ids):
+        url = f"https://api.telegram.org/bot{token}/sendMessage"
+
+        for chunk in chunk_message(text, limit=min(SAFE_MESSAGE_LIMIT, TELEGRAM_LIMIT)):
+            payload = {
+                "chat_id": chat_id,
+                "text": chunk,
+                "link_preview_options": {"is_disabled": True},
+            }
+            response = requests.post(url, json=payload, timeout=30)
+            response.raise_for_status()
+            data = response.json()
+            if not data.get("ok"):
+                raise RuntimeError(f"Telegram sendMessage failed for chat {chat_id}: {data}")
 
 
 def deliver_message(text: str) -> None:
