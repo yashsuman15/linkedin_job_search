@@ -83,8 +83,8 @@ Add these repository secrets for the current multi-profile setup:
 | Secret | Value |
 | --- | --- |
 | `GROQ_API_KEY` | Your Groq API key |
-| `TELEGRAM_BOT_TOKEN` | Token(s) from BotFather (comma-separated for multiple) |
-| `TELEGRAM_CHAT_ID` | Channel username(s) like `@your_channel` or numeric chat ID (comma-separated for multiple) |
+| `TELEGRAM_BOT_TOKEN` | Token from BotFather |
+| `TELEGRAM_CHAT_ID` | Channel username like `@your_channel` or numeric chat ID |
 | `LINKEDIN_SEARCH_PROFILES_JSON` | Full JSON copied from `search_profiles.example.json` |
 
 Make the Telegram bot an admin in the channel so it can post.
@@ -207,7 +207,7 @@ If the workflow does not appear in GitHub Actions, confirm the file is on the de
 
 If jobs repeat every run, confirm workflow write permission is enabled and the `Persist scraper state` step can push commits.
 
-If Telegram does not receive messages, confirm the bot is an admin in the channel(s) and `TELEGRAM_CHAT_ID` contains valid channel username(s) like `@your_channel` or numeric chat ID(s). Also ensure the number of bot tokens matches the number of chat IDs if using multiple channels (or provide just one token/chat ID to apply to all).
+If Telegram does not receive messages, confirm the bot is an admin in the channel and `TELEGRAM_CHAT_ID` is either a channel username like `@your_channel` or the numeric chat ID.
 
 If Groq fails, confirm `GROQ_API_KEY` is set as a secret and `GROQ_MODEL` is a valid Groq chat model.
 
@@ -262,7 +262,7 @@ GROQ_API_KEY="your_groq_key" DRY_RUN=true uv run --frozen python run_linkedin_di
 To test the real Groq + Telegram flow:
 
 ```bash
-GROQ_API_KEY="your_groq_key" TELEGRAM_BOT_TOKEN="token1,token2" TELEGRAM_CHAT_ID="@channel1,@channel2" uv run --frozen python run_linkedin_digest.py
+GROQ_API_KEY="your_groq_key" TELEGRAM_BOT_TOKEN="your_bot_token" TELEGRAM_CHAT_ID="@your_channel" uv run --frozen python run_linkedin_digest.py
 ```
 
 ### Windows Git Bash Notes
