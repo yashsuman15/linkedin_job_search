@@ -11,8 +11,8 @@
       "max_pages": 2,
       "enabled": true,
       "created_at": "2026-04-29T00:00:00+00:00",
-      "last_run": "2026-06-26T06:44:55.400042",
-      "total_jobs_found": 20,
+      "last_run": "2026-06-26T11:39:11.512248",
+      "total_jobs_found": 8,
       "max_experience_years": 2
     },
     {
@@ -26,7 +26,7 @@
       "max_pages": 2,
       "enabled": true,
       "created_at": "2026-04-29T00:00:00+00:00",
-      "last_run": "2026-06-26T06:46:02.159948",
+      "last_run": "2026-06-26T11:40:08.854112",
       "total_jobs_found": 20,
       "max_experience_years": 2
     },
@@ -41,8 +41,8 @@
       "max_pages": 2,
       "enabled": true,
       "created_at": "2026-04-29T00:00:00+00:00",
-      "last_run": "2026-06-26T06:47:06.282280",
-      "total_jobs_found": 20,
+      "last_run": "2026-06-26T11:40:33.794719",
+      "total_jobs_found": 8,
       "max_experience_years": 2
     },
     {
@@ -56,8 +56,8 @@
       "max_pages": 2,
       "enabled": true,
       "created_at": "2026-04-29T00:00:00+00:00",
-      "last_run": "2026-06-26T06:48:10.739472",
-      "total_jobs_found": 20,
+      "last_run": "2026-06-26T11:41:06.051301",
+      "total_jobs_found": 10,
       "max_experience_years": 2
     },
     {
@@ -71,8 +71,8 @@
       "max_pages": 2,
       "enabled": true,
       "created_at": "2026-04-29T00:00:00+00:00",
-      "last_run": "2026-06-26T06:49:13.365176",
-      "total_jobs_found": 20,
+      "last_run": "2026-06-26T11:41:29.083687",
+      "total_jobs_found": 8,
       "max_experience_years": 2
     },
     {
@@ -86,8 +86,8 @@
       "max_pages": 2,
       "enabled": true,
       "created_at": "2026-04-29T00:00:00+00:00",
-      "last_run": "2026-06-26T06:50:15.738710",
-      "total_jobs_found": 20,
+      "last_run": "2026-06-26T11:41:55.523833",
+      "total_jobs_found": 9,
       "max_experience_years": 2
     },
     {
@@ -101,8 +101,8 @@
       "max_pages": 2,
       "enabled": true,
       "created_at": "2026-04-29T00:00:00+00:00",
-      "last_run": "2026-06-26T06:51:19.984467",
-      "total_jobs_found": 20,
+      "last_run": "2026-06-26T11:42:01.628805",
+      "total_jobs_found": 1,
       "max_experience_years": 2
     },
     {
@@ -116,8 +116,8 @@
       "max_pages": 2,
       "enabled": true,
       "created_at": "2026-04-29T00:00:00+00:00",
-      "last_run": "2026-06-26T06:52:26.463430",
-      "total_jobs_found": 20,
+      "last_run": "2026-06-26T11:42:21.902307",
+      "total_jobs_found": 7,
       "max_experience_years": 2
     }
   ],
